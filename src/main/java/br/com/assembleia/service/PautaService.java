@@ -6,7 +6,7 @@ import br.com.assembleia.dto.PautaDTO;
 import br.com.assembleia.dto.SessaoDTO;
 import br.com.assembleia.error.ErroInternoException;
 import br.com.assembleia.repository.PautaRepository;
-import org.apache.tomcat.jni.Local;
+import br.com.assembleia.validate.PautaValidate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,15 +24,19 @@ public class PautaService {
 
     private final PautaRepository pautaRepository;
     private final PautaConverter pautaConverter;
+    private final PautaValidate pautaValidate;
 
     @Autowired
     public PautaService(PautaRepository pautaRepository,
-                        PautaConverter pautaConverter) {
+                        PautaConverter pautaConverter,
+                        PautaValidate pautaValidate) {
         this.pautaRepository = pautaRepository;
         this.pautaConverter = pautaConverter;
+        this.pautaValidate = pautaValidate;
     }
 
     public Pauta criarPauta(PautaDTO dto) throws Exception {
+        pautaValidate.validate(dto);
         try {
             return pautaRepository.save(pautaConverter.toModel(dto));
         } catch (Exception e) {

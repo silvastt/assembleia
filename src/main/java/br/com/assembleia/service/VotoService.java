@@ -9,6 +9,7 @@ import br.com.assembleia.converter.VotoConverter;
 import br.com.assembleia.dto.VotoDTO;
 import br.com.assembleia.error.ErroInternoException;
 import br.com.assembleia.repository.VotoRepository;
+import br.com.assembleia.validate.VotoValidate;
 import feign.FeignException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,6 +31,7 @@ public class VotoService {
 
     private final VotoRepository votoRepository;
     private final VotoConverter votoConverter;
+    private final VotoValidate votoValidate;
     private final PautaService pautaService;
     private final ControleService controleService;
     private final AssociadoClient associadoClient;
@@ -37,17 +39,20 @@ public class VotoService {
     @Autowired
     public VotoService(VotoRepository votoRepository,
                        VotoConverter votoConverter,
+                       VotoValidate votoValidate,
                        PautaService pautaService,
                        ControleService controleService,
                        AssociadoClient associadoClient) {
         this.votoRepository = votoRepository;
         this.votoConverter = votoConverter;
+        this.votoValidate = votoValidate;
         this.pautaService = pautaService;
         this.controleService = controleService;
         this.associadoClient = associadoClient;
     }
 
-    public String votar(String idAssociado, VotoDTO votoDTO) {
+    public String votar(String idAssociado, VotoDTO votoDTO) throws Exception {
+        votoValidate.validate(votoDTO);
         validaAssociado(idAssociado);
         validaPauta(votoDTO);
         validaControle(idAssociado, votoDTO.getIdPauta());

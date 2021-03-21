@@ -21,7 +21,7 @@ public class ResultadoRest {
     }
 
     @GetMapping("/{idPauta}")
-    public ResponseEntity<ResultadoDTO> gerarResultado(@PathVariable String idPauta) throws Exception {
+    public ResponseEntity<ResultadoDTO> gerarResultado(@PathVariable String idPauta) {
         return ResponseEntity.ok(resultadoService.gerarResultado(idPauta));
     }
 

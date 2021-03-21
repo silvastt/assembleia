@@ -19,7 +19,7 @@ public class SessaoRest {
 
     @PostMapping("/abrir/{idPauta}")
     public ResponseEntity<String> abrirSessao(@PathVariable String idPauta,
-                                              @RequestBody SessaoDTO sessao) throws Exception {
+                                              @RequestBody SessaoDTO sessao) {
         return ResponseEntity.ok(pautaService.abrirSessao(idPauta, sessao));
     }
 

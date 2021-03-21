@@ -6,9 +6,11 @@ import br.com.assembleia.dto.PautaDTO;
 import br.com.assembleia.dto.SessaoDTO;
 import br.com.assembleia.error.ErroInternoException;
 import br.com.assembleia.repository.PautaRepository;
+import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -43,13 +45,29 @@ public class PautaService {
         Optional<Pauta> pauta = buscarPauta(idPauta);
         validaPauta(pauta);
 
-        pauta.get().setSessao(sessao);
+        pauta.get().setSessao(validaSessao(sessao));
         pautaRepository.save(pauta.get());
         return SESSAO_ABERTA_SUCESSO;
     }
 
     public Optional<Pauta> buscarPauta(String idPauta) {
         return pautaRepository.findById(idPauta);
+    }
+
+    private SessaoDTO validaSessao(SessaoDTO sessao) {
+        if (Objects.isNull(sessao.getAbertura())) {
+            return gerarSessaoAutomatica();
+        }
+
+        return sessao;
+    }
+
+    private SessaoDTO gerarSessaoAutomatica() {
+        LocalDateTime agora = LocalDateTime.now();
+        return SessaoDTO.builder()
+                        .abertura(agora)
+                        .fechamento(agora.plusMinutes(1))
+                        .build();
     }
 
     private void validaPauta(Optional<Pauta> pauta) {

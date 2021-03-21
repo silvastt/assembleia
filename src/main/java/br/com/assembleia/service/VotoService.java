@@ -3,6 +3,7 @@ package br.com.assembleia.service;
 import br.com.assembleia.bo.Associado;
 import br.com.assembleia.bo.Controle;
 import br.com.assembleia.bo.Pauta;
+import br.com.assembleia.bo.Voto;
 import br.com.assembleia.client.AssociadoClient;
 import br.com.assembleia.converter.VotoConverter;
 import br.com.assembleia.dto.VotoDTO;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service("VotoService")
@@ -104,5 +106,9 @@ public class VotoService {
                                           .idPauta(idPauta)
                                           .idAssociado(idAssociado)
                                           .build());
+    }
+
+    public List<Voto> buscarVotosPorPauta(String idPauta) {
+        return votoRepository.findByIdPauta(idPauta);
     }
 }

@@ -9,6 +9,7 @@
 # IntelliJ
 /out/
 assembleia.iml
+target
 
 # mpeltonen/sbt-idea plugin
 .idea_modules/

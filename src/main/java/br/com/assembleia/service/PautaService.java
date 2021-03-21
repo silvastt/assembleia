@@ -17,7 +17,7 @@ import java.util.Optional;
 @Service("PautaService")
 public class PautaService {
 
-    private static final String ERRO_CRIAR_PAUTA = "Erro ao criar associado!";
+    private static final String ERRO_CRIAR_PAUTA = "Erro ao criar pauta!";
     private static final String SESSAO_ABERTA_SUCESSO = "Sessão aberta com sucesso!";
     private static final String PAUTA_NAO_ENCONTRADA = "Pauta não encontrada!";
     private static final String PAUTA_JA_ABERTA = "Pauta já aberta!";

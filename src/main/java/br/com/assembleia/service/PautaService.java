@@ -40,12 +40,16 @@ public class PautaService {
 
 
     public String abrirSessao(String idPauta, SessaoDTO sessao) {
-        Optional<Pauta> pauta = pautaRepository.findById(idPauta);
+        Optional<Pauta> pauta = buscarPauta(idPauta);
         validaPauta(pauta);
 
         pauta.get().setSessao(sessao);
         pautaRepository.save(pauta.get());
         return SESSAO_ABERTA_SUCESSO;
+    }
+
+    public Optional<Pauta> buscarPauta(String idPauta) {
+        return pautaRepository.findById(idPauta);
     }
 
     private void validaPauta(Optional<Pauta> pauta) {
@@ -57,4 +61,5 @@ public class PautaService {
             throw new ErroInternoException(PAUTA_JA_ABERTA);
         }
     }
+
 }

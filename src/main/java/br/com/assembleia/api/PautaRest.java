@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value = "/pauta")
+@RequestMapping(value = "/assembleia/pauta")
 public class PautaRest {
 
     private final PautaService pautaService;

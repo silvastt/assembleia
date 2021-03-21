@@ -7,6 +7,8 @@ import br.com.assembleia.dto.SessaoDTO;
 import br.com.assembleia.error.ErroInternoException;
 import br.com.assembleia.repository.PautaRepository;
 import br.com.assembleia.validate.PautaValidate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +18,8 @@ import java.util.Optional;
 
 @Service("PautaService")
 public class PautaService {
+
+    Logger logger = LoggerFactory.getLogger(PautaService.class);
 
     private static final String ERRO_CRIAR_PAUTA = "Erro ao criar pauta!";
     private static final String SESSAO_ABERTA_SUCESSO = "Sessão aberta com sucesso!";
@@ -38,8 +42,10 @@ public class PautaService {
     public Pauta criarPauta(PautaDTO dto) throws Exception {
         pautaValidate.validate(dto);
         try {
+            logger.info("Salvando Pauta: " + dto.getTitulo());
             return pautaRepository.save(pautaConverter.toModel(dto));
         } catch (Exception e) {
+            logger.error("Erro ao salvar pauta: " + dto.getTitulo());
             throw new ErroInternoException(ERRO_CRIAR_PAUTA);
         }
     }
@@ -50,15 +56,19 @@ public class PautaService {
         validaPauta(pauta);
 
         pauta.get().setSessao(validaSessao(sessao));
+        logger.info("Salvando abertura da sessao: [Pauta] " + idPauta);
         pautaRepository.save(pauta.get());
+
         return SESSAO_ABERTA_SUCESSO;
     }
 
     public Optional<Pauta> buscarPauta(String idPauta) {
+        logger.info("Buscando Pauta: " + idPauta);
         return pautaRepository.findById(idPauta);
     }
 
     private SessaoDTO validaSessao(SessaoDTO sessao) {
+        logger.info("Validando sessão:");
         if (Objects.isNull(sessao.getAbertura())) {
             return gerarSessaoAutomatica();
         }
@@ -67,6 +77,7 @@ public class PautaService {
     }
 
     private SessaoDTO gerarSessaoAutomatica() {
+        logger.info("Gerando sessão automática:");
         LocalDateTime agora = LocalDateTime.now();
         return SessaoDTO.builder()
                         .abertura(agora)
@@ -76,10 +87,12 @@ public class PautaService {
 
     private void validaPauta(Optional<Pauta> pauta) {
         if (!pauta.isPresent()) {
+            logger.error("Pauta não encontrada");
             throw new ErroInternoException(PAUTA_NAO_ENCONTRADA);
         }
 
         if (!Objects.isNull(pauta.get().getSessao().getAbertura())) {
+            logger.error("Pauta já aberta: [Pauta] " + pauta.get().getId());
             throw new ErroInternoException(PAUTA_JA_ABERTA);
         }
     }

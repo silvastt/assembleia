@@ -7,6 +7,7 @@ import lombok.Data;
 @Builder
 public class PautaDTO {
 
+    private String id;
     private String titulo;
     private String descricao;
     private SessaoDTO sessao;

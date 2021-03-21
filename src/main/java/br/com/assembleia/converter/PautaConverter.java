@@ -23,8 +23,12 @@ public class PautaConverter {
 
     public PautaDTO toDTO(Pauta pauta) {
         Assert.notNull(pauta, ERRO_CONVERSAO_PAUTA);
-        PautaDTO pautaDto = mapper.map(pauta, PautaDTO.class);
-        return pautaDto;
+        return PautaDTO.builder()
+                       .id(pauta.getId().toString())
+                       .titulo(pauta.getTitulo())
+                       .descricao(pauta.getDescricao())
+                       .sessao(pauta.getSessao())
+                       .build();
     }
 
 }

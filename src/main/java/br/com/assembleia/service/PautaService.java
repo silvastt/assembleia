@@ -5,6 +5,7 @@ import br.com.assembleia.converter.PautaConverter;
 import br.com.assembleia.dto.PautaDTO;
 import br.com.assembleia.dto.SessaoDTO;
 import br.com.assembleia.error.ErroInternoException;
+import br.com.assembleia.producer.AberturaSessaoProducer;
 import br.com.assembleia.repository.PautaRepository;
 import br.com.assembleia.validate.PautaValidate;
 import org.slf4j.Logger;
@@ -29,14 +30,17 @@ public class PautaService {
     private final PautaRepository pautaRepository;
     private final PautaConverter pautaConverter;
     private final PautaValidate pautaValidate;
+    private final AberturaSessaoProducer aberturaSessaoProducer;
 
     @Autowired
     public PautaService(PautaRepository pautaRepository,
                         PautaConverter pautaConverter,
-                        PautaValidate pautaValidate) {
+                        PautaValidate pautaValidate,
+                        AberturaSessaoProducer aberturaSessaoProducer) {
         this.pautaRepository = pautaRepository;
         this.pautaConverter = pautaConverter;
         this.pautaValidate = pautaValidate;
+        this.aberturaSessaoProducer = aberturaSessaoProducer;
     }
 
     public Pauta criarPauta(PautaDTO dto) throws Exception {
@@ -59,12 +63,18 @@ public class PautaService {
         logger.info("Salvando abertura da sessao: [Pauta] " + idPauta);
         pautaRepository.save(pauta.get());
 
+        logger.info("Enviando para fila registro de abertura de sessão.");
+        registrandoAberturaSessao(idPauta);
         return SESSAO_ABERTA_SUCESSO;
     }
 
     public Optional<Pauta> buscarPauta(String idPauta) {
         logger.info("Buscando Pauta: " + idPauta);
         return pautaRepository.findById(idPauta);
+    }
+
+    private void registrandoAberturaSessao(String idPauta) {
+        aberturaSessaoProducer.send(idPauta);
     }
 
     private SessaoDTO validaSessao(SessaoDTO sessao) {

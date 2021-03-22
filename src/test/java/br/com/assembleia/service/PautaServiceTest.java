@@ -5,6 +5,7 @@ import br.com.assembleia.converter.PautaConverter;
 import br.com.assembleia.dto.PautaDTO;
 import br.com.assembleia.dto.SessaoDTO;
 import br.com.assembleia.error.ErroInternoException;
+import br.com.assembleia.producer.AberturaSessaoProducer;
 import br.com.assembleia.repository.PautaRepository;
 import br.com.assembleia.validate.PautaValidate;
 import org.junit.Before;
@@ -30,13 +31,15 @@ public class PautaServiceTest {
     private PautaConverter pautaConverter;
     private PautaValidate pautaValidate;
     private PautaService pautaService;
+    private AberturaSessaoProducer aberturaSessaoProducer;
 
     @Before
     public void setup() {
         pautaRepository = mock(PautaRepository.class);
         pautaConverter = mock(PautaConverter.class);
         pautaValidate = mock(PautaValidate.class);
-        pautaService = new PautaService(pautaRepository, pautaConverter, pautaValidate);
+        aberturaSessaoProducer = mock(AberturaSessaoProducer.class);
+        pautaService = new PautaService(pautaRepository, pautaConverter, pautaValidate, aberturaSessaoProducer);
 
         when(pautaRepository.save(any(Pauta.class))).thenReturn(buildPautaBo());
         when(pautaConverter.toModel(any(PautaDTO.class))).thenReturn(buildPautaBo());
